@@ -15,6 +15,8 @@ def ExtractFileInfo(instrument, size, tag):
     
     if "Retina" in tag:
         fileInfo += "R"
+    elif "Superficial" in tag:
+        fileInfo += "S"
     elif "SVC" in tag:
         fileInfo += "SVC"
     elif "SVP" in tag:
@@ -23,13 +25,17 @@ def ExtractFileInfo(instrument, size, tag):
         fileInfo += "DVC"
     elif "DCP" in tag:
         fileInfo += "DCP"
+    elif "Deep" in tag:
+        fileInfo += "D"
         
-    if size == 3.3:
+    if size == 3.3 or size == 3.5 or size == 3.6:
         fileInfo += "3"
     elif size == 3.4:
         fileInfo += "3H"
     elif size == 6.4:
-        fileInfo += 6.4
+        fileInfo += "6"
+    elif size == 10.6:
+        fileInfo += "10"
     
     return fileInfo
 
@@ -42,10 +48,18 @@ def revo():
     for dirpath, dirs, files in os.walk("./REVO", topdown=False):
         if files and not dirs:
             for filename in files:
+                #print(filename + " " + dirpath)
                 if filename and not filename.startswith(".") and "." in filename and " " in filename:            
                     fileExtension = filename.split(".")[-1]
-                    fileInfo = ExtractFileInfo("revo", 3.3, filename.split(" ")[-3])
-                    filename = filename.split(" ")[0] + " " + filename.split(" ")[1]            
+                    size = dirpath.split("/")[-1]
+                    size = int(float(size.replace("_", ".")) * 10) / 10
+                    fileInfo = ExtractFileInfo("revo", size, filename.split("_")[1])
+                    print(filename + dirpath)
+                    target = os.path.join(dirpath, filename)
+                    newFilename = dirpath.split("/")[-2] + "_" + fileInfo + "." + fileExtension
+                    newName = os.path.join(dirpath, newFilename)
+                    os.rename(target, newName)
+                    print(filename + " has been changed to " + newFilename)
                 else:
                     continue
 
