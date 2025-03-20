@@ -62,5 +62,5 @@ Where `{instrument name}` can be:
 - Running the script may overwrite existing filenames; use with caution.
 
 ## License
-This project is licensed under the MIT License. See the `LICENSE` file for more details.
+This project is licensed under the MIT License.
 
