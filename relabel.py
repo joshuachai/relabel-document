@@ -127,13 +127,15 @@ def revo(imageID_list):
                     imageSizeMM = size.split("_")[0] + "x" + size.split("_")[0]
                     imageSizeScans = size.split("_")[1] + "x" + size.split("_")[1]
                     studyID, instrument, retinalLayer, imageSizeMM, imageSizeScans = decomposeFileName(studyID, instrument, retinalLayer, imageSizeMM, imageSizeScans, filename)                    
-                    print(filename)
                     for imageID, OCTA, inst, layer, mm, scans in imageID_list:
                         if OCTA == studyID and inst == instrument and layer == retinalLayer and mm == imageSizeMM and imageSizeScans == scans:
                             # Set an original file name
                             target = os.path.join(dirpath, filename)
                             # Set a new name
-                            final = os.path.join(dirpath, str(imageID) + "." + fileExtension)
+                            if int(imageID) < 1000:
+                                final = os.path.join(dirpath, "0" + str(imageID) + "." + fileExtension)
+                            else:
+                                final = os.path.join(dirpath, str(imageID) + "." + fileExtension)
                             # Rename
                             os.rename(target, final)
                             # Result message
