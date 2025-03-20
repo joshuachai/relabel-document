@@ -1,7 +1,3 @@
-Here is a clear and concise `README.md` file in English:
-
----
-
 # OCTA Data Processing Scripts
 
 ## Overview
