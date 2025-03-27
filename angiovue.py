@@ -24,8 +24,9 @@ Note:
 import os
 import glob
 import pandas as pd
-import tifffile
+from PIL import Image
 import numpy as np
+# import tifffile
 
 # -----------------------
 # Configuration
@@ -68,7 +69,7 @@ def remove_png_files(folder_path: str) -> None:
 remove_png_files(FOLDER_PATH)
 
 # -----------------------
-# Step 2: Convert .raw Files to .tiff
+# Step 2: Convert .raw Files to .BMP
 # -----------------------
 
 def read_raw_image(raw_path: str, width: int, height: int, offset: int = 0) -> np.ndarray:
@@ -103,24 +104,33 @@ def read_raw_image(raw_path: str, width: int, height: int, offset: int = 0) -> n
 
     return array
 
-def save_as_tiff(array: np.ndarray, tiff_path: str) -> None:
+def save_as_bmp(array: np.ndarray, bmp_path: str) -> None:
     """
-    Saves a NumPy array as a 32-bit float TIFF file (compatible with ImageJ).
-
+    Converts a float32 NumPy array to uint8 and saves as BMP image.
+    
     Parameters:
     ----------
     array : np.ndarray
-        The image data as a NumPy array.
-    tiff_path : str
-        The file path where the TIFF file will be saved.
+        Float32 image array.
+    bmp_path : str
+        Path where BMP will be saved.
     """
-    tifffile.imwrite(tiff_path, array, dtype=np.float32, imagej=True)
+    # bmpfile.imwrite(bmp_path, array, dtype=np.float32, imagej=True)
+
+    # Normalize float image to 0–255
+    norm = (array - np.min(array)) / (np.max(array) - np.min(array))  # Scale to 0–1
+    img_uint8 = (norm * 255).astype(np.uint8)
+
+    # Convert to PIL image and save as BMP
+    img = Image.fromarray(img_uint8)
+    img.save(bmp_path, format='BMP')
+    
 
 def batch_convert(input_folder: str) -> None:
     """
     Batch processes .raw files:
     - Identifies whether they are 3×3 or 6×6 images.
-    - Converts them to .tiff format.
+    - Converts them to .bmp format.
     - Deletes the original .raw files.
 
     Parameters:
@@ -152,14 +162,14 @@ def batch_convert(input_folder: str) -> None:
                 print(f"[ERROR] Failed to read: {filename}, Error: {ve}")
                 continue
 
-            # Save as .tiff
-            tiff_name = base_name + ".tiff"
-            tiff_path = os.path.join(input_folder, tiff_name)
-            save_as_tiff(array, tiff_path)
+            # Save as .bmp
+            bmp_name = base_name + ".bmp"
+            bmp_path = os.path.join(input_folder, bmp_name)
+            save_as_bmp(array, bmp_path)
 
             # Delete the original .raw file
             os.remove(raw_path)
-            print(f"{filename} has been converted to {tiff_name}")
+            print(f"{filename} has been converted to {bmp_name}")
 
 batch_convert(FOLDER_PATH)
 
@@ -201,12 +211,12 @@ for _, row in df.iterrows():
     rename_map[key] = image_id
 
 # -----------------------
-# Step 4: Rename .tiff Files
+# Step 4: Rename .bmp Files
 # -----------------------
 
-def parse_tiff_filename(filename_base: str):
+def parse_bmp_filename(filename_base: str):
     """
-    Parses a .tiff filename (without extension), returning:
+    Parses a .bmp filename (without extension), returning:
         (participant_id, instrument_letter, layer_letter, size_digit)
     """
     parts = filename_base.split('_')
@@ -219,19 +229,19 @@ def parse_tiff_filename(filename_base: str):
 
     return participant_id, instrument_letter, layer_letter, size_digit
 
-tiff_files = glob.glob(os.path.join(FOLDER_PATH, '*.tiff'))
+bmp_files = glob.glob(os.path.join(FOLDER_PATH, '*.bmp'))
 
-for tiff_file in tiff_files:
-    base_name = os.path.splitext(os.path.basename(tiff_file))[0]
-    participant_id, instr_letter, layer_letter, size_digit = parse_tiff_filename(base_name)
+for bmp_file in bmp_files:
+    base_name = os.path.splitext(os.path.basename(bmp_file))[0]
+    participant_id, instr_letter, layer_letter, size_digit = parse_bmp_filename(base_name)
 
     key = (participant_id, instr_letter, layer_letter, size_digit)
 
     if key in rename_map:
         new_id = rename_map[key]
-        new_name = f"{new_id}.tiff"
+        new_name = f"{new_id}.bmp"
         new_path = os.path.join(FOLDER_PATH, new_name)
-        os.rename(tiff_file, new_path)
+        os.rename(bmp_file, new_path)
         print(f"'{base_name}.raw' has been changed to '{new_name}'")  # Print confirmation of the renaming
     else:
         print(f"[WARNING] No match in Excel for '{base_name}.raw'; skipping.")  # Warn if no match was found
