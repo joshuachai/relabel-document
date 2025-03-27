@@ -30,18 +30,36 @@ def run_spectralis():
 
 # Create main window
 window = tk.Tk()
-window.title("Relabel (LEI)")
-window.geometry("300x147")
+window.title("OCTA Relabel Utility (LEI)")
+window.geometry("400x240")
+window.resizable(False, False)
+window.configure(bg="#f5f5f5")  # Light background
+
+# Title label
+title = tk.Label(window, text="OCTA Relabel Tool", font=("Helvetica", 18, "bold"), bg="#f5f5f5", fg="#333")
+title.pack(pady=15)
+
+# Button styling
+button_style = {
+    "font": ("Helvetica", 12, "bold"),
+    "bg": "#4CAF50",
+    "fg": "black",
+    "activebackground": "#45a049",
+    "width": 25,
+    "height": 2,
+    "bd": 0,
+    "relief": "flat"
+}
 
 # Add buttons
-btn1 = tk.Button(window, text="Angiovue", command=run_angiovue, width=25)
-btn1.pack(pady=10)
+btn1 = tk.Button(window, text="Run Angiovue", command=run_angiovue, **button_style)
+btn1.pack(pady=5)
 
-btn2 = tk.Button(window, text="Revo", command=run_revo, width=25)
-btn2.pack(pady=10)
+btn2 = tk.Button(window, text="Run Revo", command=run_revo, **button_style)
+btn2.pack(pady=5)
 
-btn3 = tk.Button(window, text="Spectralis", command=run_spectralis, width=25)
-btn3.pack(pady=10)
+btn3 = tk.Button(window, text="Run Spectralis", command=run_spectralis, **button_style)
+btn3.pack(pady=5)
 
 # Start the main event loop
 window.mainloop()
