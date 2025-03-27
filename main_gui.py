@@ -31,7 +31,7 @@ def run_spectralis():
 # Create main window
 window = tk.Tk()
 window.title("OCTA Relabel Utility (LEI)")
-window.geometry("400x240")
+window.geometry("400x440")
 window.resizable(False, False)
 window.configure(bg="#f5f5f5")  # Light background
 
@@ -61,5 +61,29 @@ btn2.pack(pady=5)
 btn3 = tk.Button(window, text="Run Spectralis", command=run_spectralis, **button_style)
 btn3.pack(pady=5)
 
+# Reminder label at the bottom
+reminder_text = (
+    "Before using this tool, please ensure:\n\n"
+    "• The folder contains: 2024_PartialData.xlsx and 2025_OCTA_HARMONISATION_LABELS.xlsx\n\n"
+    "• Inside the 'REVO' folder:\n"
+    "    - First-level subfolders must be named like 'OCTA001', 'OCTA002', etc.\n"
+    "    - Inside each 'OCTAxxx' folder, subfolders must be named exactly:\n"
+    "      '3_320', '3_400', or '6_400'\n\n"
+    "• Dependencies are properly installed:\n"
+    "    - pip install \"numpy<2\" pandas pillow tifffile\n"
+    "    - pip install openpyxl"
+)
+
+reminder_label = tk.Label(
+    window,
+    text=reminder_text,
+    font=("Helvetica", 12, "bold"),
+    bg="#f5f5f5",
+    fg="#444",
+    justify="left",
+    anchor="w",
+    wraplength=360
+)
+reminder_label.pack(padx=10, pady=(10, 15))
 # Start the main event loop
 window.mainloop()

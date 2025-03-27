@@ -115,7 +115,7 @@ def revo(imageID_list):
                     newFilename = studyID + "_" + fileInfo + "." + fileExtension
                     newName = os.path.join(dirpath, newFilename)
                     os.rename(target, newName)
-                    #print(filename + " has been changed to " + newFilename)
+                    print(filename + " has been changed to " + newFilename)
                 else:
                     continue
                 
